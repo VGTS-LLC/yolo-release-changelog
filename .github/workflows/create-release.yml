@@ -1,0 +1,30 @@
+name: Create GitHub Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version (e.g. v1.2.3)"
+        required: true
+      prerelease:
+        description: "Is this a prerelease?"
+        required: false
+        default: "false"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.version }}
+          name: Release ${{ github.event.inputs.version }}
+          body_path: .github/release-template.md
+          prerelease: ${{ github.event.inputs.prerelease }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
